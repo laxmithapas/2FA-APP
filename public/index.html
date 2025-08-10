@@ -7,190 +7,170 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .form-container {
-            max-width: 400px;
-            width: 100%;
-        }
-        /* Simple transition for page visibility */
-        .page {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        .page.active {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .page { display: none; animation: fadeIn 0.5s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .message { padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; font-weight: 500; display: none; }
+        .message.success { background-color: #d1fae5; color: #065f46; }
+        .message.error { background-color: #fee2e2; color: #991b1b; }
+        #qr-code-container img { margin: 1rem auto; display: block; border: 6px solid white; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
 
     <div id="app-container" class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <div id="message-area" class="message"></div>
 
         <!-- Registration Page -->
-        <div id="register-page" class="page active">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Create Account</h1>
-                <p class="text-gray-500 mt-2">Join us for a secure experience.</p>
-            </div>
-            <form id="register-form">
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input type="text" placeholder="First Name" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <input type="text" placeholder="Last Name" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <input type="email" placeholder="Email Address" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input type="tel" placeholder="Phone Number (e.g., +15551234567)" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input type="password" placeholder="Password" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 mt-6 rounded-lg hover:bg-blue-700 transition-colors duration-300">Register</button>
-            </form>
-            <p class="text-center text-sm text-gray-500 mt-6">
-                Already have an account? <a href="#" id="show-login" class="font-medium text-blue-600 hover:underline">Log In</a>
-            </p>
+        <div id="register-page" class="page">
+            <div class="text-center mb-8"><h1 class="text-3xl font-bold">Create Account</h1><p class="text-gray-500 mt-2">Join for a secure experience.</p></div>
+            <form id="register-form"><div class="space-y-4"><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><input name="firstName" type="text" placeholder="First Name" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border focus:ring-2 focus:ring-blue-500"><input name="lastName" type="text" placeholder="Last Name" class="w-full px-4 py-3 bg-gray-50 rounded-lg border focus:ring-2 focus:ring-blue-500"></div><input name="email" type="email" placeholder="Email Address" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border focus:ring-2 focus:ring-blue-500"><input name="password" type="password" placeholder="Password" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border focus:ring-2 focus:ring-blue-500"></div><button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 mt-6 rounded-lg hover:bg-blue-700">Register</button></form>
+            <p class="text-center text-sm text-gray-500 mt-6">Already have an account? <a href="#" id="show-login" class="font-medium text-blue-600 hover:underline">Log In</a></p>
+        </div>
+
+        <!-- 2FA Setup Page -->
+        <div id="setup-2fa-page" class="page">
+            <div class="text-center mb-6"><h1 class="text-3xl font-bold">Set Up 2FA</h1><p class="text-gray-500 mt-2">Scan this QR code with your authenticator app.</p></div>
+            <div id="qr-code-container"></div>
+            <p class="text-center text-xs text-gray-500 my-4">Use an app like Google Authenticator or Authy.</p>
+            <form id="verify-2fa-form"><p class="text-center font-medium mb-2">Enter the 6-digit code to verify.</p><input type="text" name="token" placeholder="123456" required maxlength="6" class="w-full px-4 py-3 bg-gray-50 rounded-lg border focus:ring-2 focus:ring-blue-500 text-center text-2xl tracking-widest"><button type="submit" class="w-full bg-green-600 text-white font-semibold py-3 mt-4 rounded-lg hover:bg-green-700">Verify & Enable 2FA</button></form>
         </div>
 
         <!-- Login Page -->
-        <div id="login-page" class="page">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Welcome Back!</h1>
-                <p class="text-gray-500 mt-2">Log in to your account.</p>
-            </div>
-            <form id="login-form">
-                <div class="space-y-4">
-                    <input type="email" placeholder="Email Address" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input type="password" placeholder="Password" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 mt-6 rounded-lg hover:bg-blue-700 transition-colors duration-300">Log In</button>
-            </form>
-            <p class="text-center text-sm text-gray-500 mt-6">
-                Don't have an account? <a href="#" id="show-register" class="font-medium text-blue-600 hover:underline">Register</a>
-            </p>
+        <div id="login-page" class="page active">
+            <div class="text-center mb-8"><h1 class="text-3xl font-bold">Welcome Back!</h1><p class="text-gray-500 mt-2">Log in to your account.</p></div>
+            <form id="login-form"><div class="space-y-4"><input name="email" type="email" placeholder="Email Address" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border focus:ring-2 focus:ring-blue-500"><input name="password" type="password" placeholder="Password" required class="w-full px-4 py-3 bg-gray-50 rounded-lg border focus:ring-2 focus:ring-blue-500"></div><button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 mt-6 rounded-lg hover:bg-blue-700">Log In</button></form>
+            <p class="text-center text-sm text-gray-500 mt-6">Don't have an account? <a href="#" id="show-register" class="font-medium text-blue-600 hover:underline">Register</a></p>
         </div>
 
-        <!-- OTP Page -->
-        <div id="otp-page" class="page">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Verify Your Identity</h1>
-                <p class="text-gray-500 mt-2">An OTP has been sent to your phone.</p>
-                <p id="otp-phone-display" class="font-semibold text-gray-700 mt-1"></p>
-            </div>
-            <form id="otp-form">
-                <div class="flex justify-center space-x-2">
-                     <input type="text" maxlength="1" class="w-12 h-14 text-center text-2xl font-bold bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" pattern="[0-9]">
-                     <input type="text" maxlength="1" class="w-12 h-14 text-center text-2xl font-bold bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" pattern="[0-9]">
-                     <input type="text" maxlength="1" class="w-12 h-14 text-center text-2xl font-bold bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" pattern="[0-9]">
-                     <input type="text" maxlength="1" class="w-12 h-14 text-center text-2xl font-bold bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" pattern="[0-9]">
-                     <input type="text" maxlength="1" class="w-12 h-14 text-center text-2xl font-bold bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" pattern="[0-9]">
-                     <input type="text" maxlength="1" class="w-12 h-14 text-center text-2xl font-bold bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" pattern="[0-9]">
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 mt-6 rounded-lg hover:bg-blue-700 transition-colors duration-300">Verify</button>
-            </form>
-             <p class="text-center text-sm text-gray-500 mt-4">
-                Didn't receive the code? <a href="#" class="font-medium text-blue-600 hover:underline">Resend</a>
-            </p>
+        <!-- OTP Page for Login -->
+        <div id="otp-login-page" class="page">
+            <div class="text-center mb-8"><h1 class="text-3xl font-bold">Two-Factor Authentication</h1><p class="text-gray-500 mt-2">Enter the code from your authenticator app.</p></div>
+            <form id="otp-login-form"><input type="text" name="token" placeholder="123456" required maxlength="6" class="w-full px-4 py-3 bg-gray-50 rounded-lg border focus:ring-2 focus:ring-blue-500 text-center text-2xl tracking-widest"><button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 mt-4 rounded-lg hover:bg-blue-700">Verify</button></form>
         </div>
 
-        <!-- Awareness Page -->
-        <div id="awareness-page" class="page">
-            <div class="text-center mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <h1 class="text-3xl font-bold text-gray-900 mt-4">Registration Successful!</h1>
-                <p class="text-gray-500 mt-2">A quick word on online security.</p>
+        <!-- Dashboard Page (Protected) -->
+        <div id="dashboard-page" class="page">
+            <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <h1 id="dashboard-message" class="text-2xl font-bold mt-4"></h1>
+                <p class="text-gray-500 mt-2">You have successfully logged in!</p>
+                <button id="logout-button" class="w-full bg-red-600 text-white font-semibold py-3 mt-8 rounded-lg hover:bg-red-700">Log Out</button>
             </div>
-            <div class="text-left space-y-4 text-gray-600">
-                <p><strong>Strong Passwords:</strong> Always use a mix of letters (upper and lower case), numbers, and symbols. Avoid using personal information.</p>
-                <p><strong>Two-Factor Authentication (2FA):</strong> You've just set it up! It adds a crucial second layer of security to your accounts.</p>
-                <p><strong>Phishing Scams:</strong> Be wary of unsolicited emails or messages asking for personal information. Always verify the sender.</p>
-                <p><strong>Secure Networks:</strong> Avoid using public Wi-Fi for sensitive transactions. Use a VPN if you must.</p>
-            </div>
-             <button id="go-to-login" class="w-full bg-blue-600 text-white font-semibold py-3 mt-8 rounded-lg hover:bg-blue-700 transition-colors duration-300">Proceed to Login</button>
         </div>
-
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            let tempUserId = null;
             const pages = {
                 register: document.getElementById('register-page'),
+                setup2fa: document.getElementById('setup-2fa-page'),
                 login: document.getElementById('login-page'),
-                otp: document.getElementById('otp-page'),
-                awareness: document.getElementById('awareness-page')
+                otpLogin: document.getElementById('otp-login-page'),
+                dashboard: document.getElementById('dashboard-page'),
+            };
+            const messageArea = document.getElementById('message-area');
+            const qrCodeContainer = document.getElementById('qr-code-container');
+            const dashboardMessage = document.getElementById('dashboard-message');
+
+            const showMessage = (message, type = 'error') => {
+                messageArea.textContent = message;
+                messageArea.className = 'message ' + type;
+                messageArea.style.display = 'block';
+            };
+            const hideMessage = () => { messageArea.style.display = 'none'; };
+            const showPage = (pageName) => {
+                hideMessage();
+                Object.values(pages).forEach(p => p.classList.remove('active'));
+                pages[pageName].classList.add('active');
             };
 
-            // Function to switch between pages
-            function showPage(pageName) {
-                Object.values(pages).forEach(page => page.classList.remove('active'));
-                pages[pageName].classList.add('active');
-            }
-
-            // --- Event Listeners for Navigation ---
-            document.getElementById('show-login').addEventListener('click', (e) => {
-                e.preventDefault();
-                showPage('login');
-            });
-
-            document.getElementById('show-register').addEventListener('click', (e) => {
-                e.preventDefault();
-                showPage('register');
-            });
-            
-            document.getElementById('go-to-login').addEventListener('click', (e) => {
-                e.preventDefault();
-                showPage('login');
-            });
-
-            // --- Form Submission Logic (Simulated) ---
-            document.getElementById('register-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                // In a real app, you would send data to the server here.
-                console.log('Registration form submitted.');
-                showPage('awareness'); // Show awareness page after registration
-            });
-
-            document.getElementById('login-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                // In a real app, you would verify credentials here.
-                // If correct, the server sends an OTP and you show the OTP page.
-                console.log('Login form submitted.');
-                const phone = '+1...xxxx5678'; // Placeholder phone
-                document.getElementById('otp-phone-display').textContent = `to ${phone}`;
-                showPage('otp');
-            });
-            
-            document.getElementById('otp-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                // In a real app, you would verify the OTP here.
-                // If correct, log the user in.
-                console.log('OTP form submitted.');
-                alert('Login Successful! (Simulated)');
-                // For now, just go back to the login page
-                showPage('login'); 
-            });
-
-            // --- OTP Input Auto-Focus Logic ---
-            const otpInputs = document.querySelectorAll('#otp-form input');
-            otpInputs.forEach((input, index) => {
-                input.addEventListener('keyup', (e) => {
-                    // If the key is a number and there is a next input, focus it
-                    if (e.key >= 0 && e.key <= 9 && index < otpInputs.length - 1) {
-                        otpInputs[index + 1].focus();
+            const handleFetch = async (url, options) => {
+                try {
+                    const response = await fetch(url, options);
+                    const result = await response.json();
+                    if (!response.ok) {
+                        showMessage(result.message || 'An error occurred.', 'error');
+                        return null;
                     }
-                });
-                input.addEventListener('keydown', (e) => {
-                    // If backspace is pressed and the input is empty, focus the previous input
-                    if (e.key === 'Backspace' && input.value === '' && index > 0) {
-                        otpInputs[index - 1].focus();
-                    }
-                });
+                    return result;
+                } catch (error) {
+                    showMessage('Could not connect to the server.', 'error');
+                    return null;
+                }
+            };
+            
+            // --- Navigation ---
+            document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); showPage('login'); });
+            document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); showPage('register'); });
+
+            // --- Registration ---
+            document.getElementById('register-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(e.target).entries());
+                const result = await handleFetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                if (result) {
+                    tempUserId = result.userId;
+                    qrCodeContainer.innerHTML = `<img src="${result.qrCodeUrl}" alt="QR Code">`;
+                    showPage('setup2fa');
+                }
             });
+
+            // --- 2FA Setup Verification ---
+            document.getElementById('verify-2fa-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const token = e.target.elements.token.value;
+                if (!tempUserId) { showMessage('Session expired. Please register again.'); return; }
+                const result = await handleFetch('/api/verify-2fa', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: tempUserId, token }) });
+                if (result) {
+                    showMessage(result.message, 'success');
+                    setTimeout(() => showPage('login'), 2000);
+                }
+            });
+
+            // --- Login Step 1: Password ---
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(e.target).entries());
+                const result = await handleFetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                if (result) {
+                    showPage('otpLogin');
+                }
+            });
+
+            // --- Login Step 2: OTP ---
+            document.getElementById('otp-login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const token = e.target.elements.token.value;
+                const result = await handleFetch('/api/login/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) });
+                if (result) {
+                    await loadDashboard();
+                }
+            });
+
+            // --- Dashboard & Logout ---
+            const loadDashboard = async () => {
+                const result = await handleFetch('/api/dashboard', { method: 'GET' });
+                if (result) {
+                    dashboardMessage.textContent = result.message;
+                    showPage('dashboard');
+                } else {
+                    // If fetching dashboard fails, user is not authenticated, show login
+                    showPage('login');
+                }
+            };
+            
+            document.getElementById('logout-button').addEventListener('click', async () => {
+                const result = await handleFetch('/api/logout', { method: 'POST' });
+                if (result) {
+                    showPage('login');
+                }
+            });
+
+            // Initial check to see if user is already logged in
+            loadDashboard();
         });
     </script>
 </body>
