@@ -1,0 +1,24 @@
+{
+  "name": "2fa-app",
+  "version": "1.0.0",
+  "description": "This",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laxmithapas/2FA-APP.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/laxmithapas/2FA-APP/issues"
+  },
+  "homepage": "https://github.com/laxmithapas/2FA-APP#readme",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  }
+}
