@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/laxmithapas/2FA-APP#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "lowdb": "^1.0.0"
   }
 }
